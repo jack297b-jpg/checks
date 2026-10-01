@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0907" />
+  <title>The Room</title>
+  <style>
+    :root{
+      --bg:#090807;--panel:#110f0c;--panel2:#17130f;--gold:#c6a564;--gold2:#8f7343;
+      --text:#eee6d8;--muted:#9f9587;--line:#30281d;--danger:#b76b65;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;background:
+      radial-gradient(circle at 50% -20%,#2a2115 0,transparent 42%),
+      linear-gradient(#090807,#0c0a08);color:var(--text);font-family:Georgia,"Times New Roman",serif}
+    body{min-height:100dvh}
+    button,input,textarea{font:inherit}
+    button{cursor:pointer}
+    .hidden{display:none!important}
+    .gate{min-height:100dvh;display:grid;place-items:center;padding:24px}
+    .gate-card{width:min(520px,100%);padding:38px 28px 30px;border:1px solid var(--line);
+      background:linear-gradient(180deg,rgba(22,18,13,.94),rgba(13,11,9,.98));
+      box-shadow:0 30px 90px #0009,inset 0 0 0 1px #c6a56410;position:relative;text-align:center}
+    .gate-card:before,.gate-card:after{content:"";position:absolute;inset:9px;border:1px solid #c6a56425;pointer-events:none}
+    .gate-card:after{inset:16px;border-color:#c6a56412}
+    .orn{color:var(--gold);font-size:22px;letter-spacing:12px;margin-bottom:14px}
+    .sigil,.mini{display:grid;place-items:center;border:1px solid var(--gold2);color:var(--gold);
+      border-radius:50%;margin:auto;background:#0d0b08;box-shadow:inset 0 0 22px #c6a56410}
+    .sigil{width:74px;height:74px;font-size:30px}
+    .mini{width:38px;height:38px;font-size:16px;margin:0}
+    h1{font-weight:400;letter-spacing:.045em;font-size:clamp(30px,7vw,48px);margin:16px 0 8px}
+    h2{font-weight:400}
+    .sub{color:var(--muted);line-height:1.6;margin:0 auto 20px;max-width:420px}
+    .key-row{display:flex;gap:8px;position:relative;z-index:2}
+    .key-row input,.memory-add input{width:100%;border:1px solid var(--line);background:#0b0a08;color:var(--text);
+      padding:13px 14px;outline:none;border-radius:8px}
+    .key-row input:focus,.memory-add input:focus,textarea:focus{border-color:var(--gold2)}
+    .primary{border:1px solid var(--gold2);background:linear-gradient(#c7a767,#a48650);color:#100d08;
+      padding:12px 18px;border-radius:8px;font-weight:700}
+    .tiny{font-size:12px;color:#746c61;margin-top:12px;line-height:1.5}
+    .shell{min-height:100dvh;display:grid;grid-template-rows:auto 1fr auto;max-width:980px;margin:auto;
+      border-inline:1px solid #211c15;background:#0c0a08}
+    .topbar{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;
+      gap:14px;padding:14px 18px;border-bottom:1px solid var(--line);background:#0c0a08ed;backdrop-filter:blur(18px)}
+    .brand{display:flex;gap:12px;align-items:center}.brand h1{font-size:20px;margin:0}.brand p{margin:3px 0 0;color:var(--muted);font-size:12px}
+    .actions{display:flex;gap:8px}.ghost{border:1px solid var(--line);background:#14110e;color:var(--text);
+      border-radius:8px;padding:9px 11px}.ghost:hover{border-color:var(--gold2)}
+    .conversation{padding:28px 18px 160px;overflow-x:hidden}
+    .welcome{max-width:660px;margin:10vh auto 0;text-align:center;padding:26px}
+    .welcome h2{font-size:32px;margin:8px 0}.welcome p{color:var(--muted);line-height:1.65}
+    .principles{display:flex;justify-content:center;flex-wrap:wrap;gap:8px;margin-top:20px}
+    .principles span{border:1px solid var(--line);padding:7px 10px;border-radius:999px;color:#c6baa8;font-size:12px}
+    .message{display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px;max-width:760px;margin:0 auto 22px}
+    .message.user{opacity:.93}.mark{width:32px;height:32px;border:1px solid var(--line);border-radius:50%;
+      display:grid;place-items:center;color:var(--gold);font-size:12px;background:#100e0b}
+    .user .mark{color:#bbb1a1}.body{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.66;font-size:16px}
+    .body a{color:#d0b476;text-decoration-color:#6d5732}
+    .thinking{color:var(--muted);font-style:italic}
+    .composer-wrap{position:fixed;z-index:4;bottom:0;left:50%;transform:translateX(-50%);width:min(980px,100%);
+      padding:10px 16px max(12px,env(safe-area-inset-bottom));background:linear-gradient(transparent,#0c0a08 25%,#0c0a08 100%)}
+    .notice{max-width:820px;margin:0 auto 8px;border:1px solid #66483f;background:#211512;color:#e1b4a8;
+      padding:9px 12px;border-radius:8px;font-size:13px}
+    .composer{max-width:820px;margin:auto;display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:end;
+      border:1px solid var(--line);background:#12100d;padding:8px;border-radius:14px;box-shadow:0 10px 40px #0008}
+    textarea{resize:none;max-height:180px;min-height:40px;border:0;outline:0;background:transparent;color:var(--text);
+      padding:10px 5px;line-height:1.45}
+    .round{width:40px;height:40px;border-radius:50%;border:1px solid var(--line);background:#18140f;color:var(--text)}
+    .send{background:var(--gold);color:#171108;border-color:var(--gold)}
+    .foot{max-width:820px;margin:7px auto 0;display:flex;justify-content:space-between;gap:10px;color:#6f675e;font-size:11px}
+    .linkbtn{border:0;background:none;color:#847a6d;padding:0}
+    .backdrop{position:fixed;z-index:20;inset:0;background:#0009;display:flex;justify-content:flex-end}
+    .drawer{width:min(430px,92vw);height:100%;background:#100e0b;border-left:1px solid var(--line);padding:22px;overflow:auto}
+    .drawer-head{display:flex;justify-content:space-between;gap:10px;align-items:start}.drawer h2{margin:4px 0 0}
+    .eyebrow{color:var(--gold);font-size:10px;letter-spacing:.17em;margin:0}
+    .drawer-copy{color:var(--muted);line-height:1.55;font-size:14px}
+    .memory-add{display:flex;gap:8px;margin:18px 0}.memory-card{display:flex;justify-content:space-between;gap:12px;
+      padding:13px 0;border-top:1px solid var(--line)}.memory-card p{margin:0;line-height:1.5}
+    .icon-del{border:0;background:none;color:#8d6e64}
+    @media(max-width:600px){
+      .topbar{padding:11px 12px}.brand p{display:none}.actions .label{display:none}
+      .conversation{padding-inline:12px}.body{font-size:15px}.foot span{display:none}
+      .composer-wrap{padding-inline:8px}.welcome{margin-top:7vh;padding-inline:12px}
+    }
+  </style>
+</head>
+<body>
+  <section id="gate" class="gate">
+    <div class="gate-card">
+      <div class="orn">✦ · ✦</div>
+      <div class="sigil">R</div>
+      <h1>The Room</h1>
+      <p class="sub">A private place for candid conversation, memory and research. No account. No sign-in.</p>
+      <div class="key-row">
+        <input id="keyInput" type="password" autocomplete="off" placeholder="Private Room key" />
+        <button id="enterBtn" class="primary">Enter</button>
+      </div>
+      <p id="gateNote" class="tiny">On first use only. Your browser keeps the key locally after this.</p>
+    </div>
+  </section>
+
+  <main id="app" class="shell hidden">
+    <header class="topbar">
+      <div class="brand">
+        <div class="mini">R</div>
+        <div><h1>The Room</h1><p>Private key • remembers • can search the open web</p></div>
+      </div>
+      <div class="actions">
+        <button id="speakBtn" class="ghost" title="Toggle spoken replies">🔊</button>
+        <button id="memoryBtn" class="ghost"><span class="label">Memory</span> ◇</button>
+      </div>
+    </header>
+
+    <section id="conversation" class="conversation">
+      <div id="welcome" class="welcome">
+        <div class="orn">❧</div>
+        <h2>You found me.</h2>
+        <p>Ask plainly. I’ll answer plainly. When the outside world matters, I can search it.</p>
+        <div class="principles"><span>Fact ≠ inference</span><span>No flattery</span><span>No fake certainty</span></div>
+      </div>
+      <div id="messages"></div>
+      <div id="thinking" class="message hidden">
+        <div class="mark">C</div><div class="body thinking">Thinking without the theatre…</div>
+      </div>
+    </section>
+
+    <section class="composer-wrap">
+      <div id="notice" class="notice hidden"></div>
+      <div class="composer">
+        <button id="micBtn" class="round" title="Voice input">🎙</button>
+        <textarea id="input" rows="1" placeholder="Say what you actually mean…"></textarea>
+        <button id="sendBtn" class="round send" title="Send">➤</button>
+      </div>
+      <div class="foot">
+        <button id="eraseBtn" class="linkbtn">erase conversation</button>
+        <span>Direct answers. Evidence when it matters. Uncertainty when it’s real.</span>
+      </div>
+    </section>
+  </main>
+
+  <div id="backdrop" class="backdrop hidden">
+    <aside class="drawer" id="drawer">
+      <div class="drawer-head">
+        <div><p class="eyebrow">PRIVATE MEMORY</p><h2>What stays with me</h2></div>
+        <button id="closeMemory" class="ghost">×</button>
+      </div>
+      <p class="drawer-copy">Keep enduring context here. It is stored against a hash of your private Room key.</p>
+      <div class="memory-add">
+        <input id="memoryInput" maxlength="1200" placeholder="Remember that…" />
+        <button id="keepMemory" class="primary">Keep</button>
+      </div>
+      <div id="memoryList"></div>
+    </aside>
+  </div>
+
+<script>
+const ENDPOINT = "https://ccblcxkcufelatlfxzyd.supabase.co/functions/v1/the-room-api";
+const STORAGE_KEY = "the-room-private-key-v1";
+let roomKey = localStorage.getItem(STORAGE_KEY) || "";
+let speaking = true;
+let busy = false;
+
+const el = id => document.getElementById(id);
+const gate = el("gate"), app = el("app"), messages = el("messages"), welcome = el("welcome");
+const input = el("input"), notice = el("notice"), thinking = el("thinking");
+
+function readLaunchKey(){
+  const hash = location.hash || "";
+  const m = hash.match(/(?:^#|[&#])room=([A-Za-z0-9_-]{32,100})/);
+  if(m){
+    roomKey = m[1];
+    localStorage.setItem(STORAGE_KEY, roomKey);
+    history.replaceState(null,"",location.pathname + location.search);
+  }
+}
+readLaunchKey();
+
+async function call(action, payload={}){
+  const res = await fetch(ENDPOINT,{
+    method:"POST",
+    headers:{"Content-Type":"application/json","X-Room-Key":roomKey},
+    body:JSON.stringify({action,...payload})
+  });
+  let data={};
+  try{ data=await res.json(); }catch{}
+  if(!res.ok) throw new Error(data.error || "The Room could not complete that request.");
+  return data;
+}
+
+function showNotice(text){
+  notice.textContent=text; notice.classList.toggle("hidden",!text);
+}
+
+function appendLinkedText(container,text){
+  const urlRe=/https?:\/\/[^\s]+/g;
+  let last=0,match;
+  while((match=urlRe.exec(text))){
+    if(match.index>last) container.append(document.createTextNode(text.slice(last,match.index)));
+    const a=document.createElement("a"); a.href=match[0].replace(/[),.;]+$/,""); a.target="_blank"; a.rel="noopener noreferrer";
+    a.textContent=a.href; container.append(a); last=match.index+match[0].length;
+  }
+  if(last<text.length) container.append(document.createTextNode(text.slice(last)));
+}
+
+function renderMessage(msg){
+  const article=document.createElement("article");
+  article.className="message "+msg.role;
+  const mark=document.createElement("div"); mark.className="mark"; mark.textContent=msg.role==="assistant"?"C":"Y";
+  const body=document.createElement("div"); body.className="body"; appendLinkedText(body,msg.content || "");
+  article.append(mark,body); messages.append(article);
+}
+
+async function openRoom(){
+  showNotice("");
+  try{
+    await call("history.list");
+    localStorage.setItem(STORAGE_KEY,roomKey);
+    gate.classList.add("hidden"); app.classList.remove("hidden");
+    await loadState();
+  }catch(e){
+    el("gateNote").textContent=e.message || "That key did not open The Room.";
+  }
+}
+
+async function loadState(){
+  messages.textContent="";
+  const [h,m]=await Promise.all([call("history.list"),call("memory.list")]);
+  const history=h.messages || [];
+  welcome.classList.toggle("hidden",history.length>0);
+  history.forEach(x=>renderMessage({role:x.role,content:x.content}));
+  renderMemories(m.memories || []);
+  scrollBottom(false);
+}
+
+function scrollBottom(smooth=true){
+  window.scrollTo({top:document.body.scrollHeight,behavior:smooth?"smooth":"auto"});
+}
+
+async function send(){
+  const text=input.value.trim(); if(!text || busy) return;
+  busy=true; input.value=""; showNotice(""); welcome.classList.add("hidden");
+  renderMessage({role:"user",content:text}); thinking.classList.remove("hidden"); scrollBottom();
+  try{
+    const data=await call("chat",{message:text});
+    thinking.classList.add("hidden");
+    renderMessage(data.reply);
+    if(speaking && "speechSynthesis" in window){
+      speechSynthesis.cancel();
+      const u=new SpeechSynthesisUtterance(data.reply.content); u.rate=.98; u.pitch=.92; speechSynthesis.speak(u);
+    }
+  }catch(e){
+    thinking.classList.add("hidden"); showNotice(e.message);
+  }finally{busy=false;scrollBottom()}
+}
+
+function renderMemories(items){
+  const list=el("memoryList"); list.textContent="";
+  if(!items.length){ const p=document.createElement("p"); p.className="drawer-copy"; p.textContent="Nothing stored yet."; list.append(p); return; }
+  items.forEach(item=>{
+    const card=document.createElement("div"); card.className="memory-card";
+    const p=document.createElement("p"); p.textContent=item.content;
+    const b=document.createElement("button"); b.className="icon-del"; b.textContent="⌫";
+    b.onclick=async()=>{ try{await call("memory.delete",{id:item.id}); await refreshMemories()}catch(e){showNotice(e.message)} };
+    card.append(p,b); list.append(card);
+  });
+}
+async function refreshMemories(){ const m=await call("memory.list"); renderMemories(m.memories||[]) }
+
+el("enterBtn").onclick=()=>{ roomKey=el("keyInput").value.trim(); openRoom() };
+el("keyInput").addEventListener("keydown",e=>{if(e.key==="Enter"){roomKey=e.target.value.trim();openRoom()}});
+el("sendBtn").onclick=send;
+input.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}});
+input.addEventListener("input",()=>{input.style.height="auto";input.style.height=Math.min(input.scrollHeight,180)+"px"});
+el("speakBtn").onclick=()=>{speaking=!speaking;el("speakBtn").textContent=speaking?"🔊":"🔇";if(!speaking&&"speechSynthesis"in window)speechSynthesis.cancel()};
+el("memoryBtn").onclick=async()=>{el("backdrop").classList.remove("hidden");try{await refreshMemories()}catch(e){showNotice(e.message)}};
+el("closeMemory").onclick=()=>el("backdrop").classList.add("hidden");
+el("backdrop").onclick=e=>{if(e.target===el("backdrop"))el("backdrop").classList.add("hidden")};
+el("keepMemory").onclick=async()=>{
+  const content=el("memoryInput").value.trim(); if(!content)return;
+  try{await call("memory.add",{content});el("memoryInput").value="";await refreshMemories()}catch(e){showNotice(e.message)}
+};
+el("memoryInput").addEventListener("keydown",e=>{if(e.key==="Enter")el("keepMemory").click()});
+el("eraseBtn").onclick=async()=>{
+  if(!confirm("Erase this conversation history permanently?"))return;
+  try{await call("history.clear");messages.textContent="";welcome.classList.remove("hidden");showNotice("Conversation history erased.")}catch(e){showNotice(e.message)}
+};
+
+el("micBtn").onclick=()=>{
+  const Rec=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!Rec){showNotice("Voice input is not available in this browser.");return}
+  const r=new Rec();r.lang="en-GB";r.interimResults=false;r.continuous=false;
+  r.onresult=e=>{const t=e.results[0][0].transcript;input.value+=(input.value?" ":"")+t};
+  r.onerror=()=>showNotice("I could not hear that clearly.");r.start();
+};
+
+if(roomKey) openRoom();
+</script>
+</body>
+</html>
